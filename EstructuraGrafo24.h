@@ -5,16 +5,16 @@
 typedef unsigned int u32;
 typedef u32 color;
 
+struct vertices{
+    u32** vecinos; // vecinos[i][j] = el vecino j-ésimo del vértice i
+    u32 tamaño;
+};
 
 typedef struct _Grafo {
-    u32* list_vertices;
-    u32 cantidad_vertices;
-    u32** lados;
-    u32 cantidad_lados;
+    struct vertices* vertices;
     u32 delta;
     color* list_color;
 } GrafoSt;
-
 
 #endif
 
