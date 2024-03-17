@@ -1,7 +1,7 @@
 TARGET = main
 SRCS = APIG24.c main.c
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -Wextra -std=c11 -g
 K5_PATH = examples/K5.txt
 
 OBJS = $(SRCS:.c=.o)
