@@ -1,8 +1,8 @@
 #ifndef ESTRUCTURA_GRAFO_24_H
 #define ESTRUCTURA_GRAFO_24_H
 
-
-typedef unsigned int u32;
+#include <stdint.h>
+typedef uint32_t u32;
 typedef u32 color;
 
 typedef struct _vertices{
