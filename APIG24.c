@@ -20,7 +20,7 @@ Grafo ConstruirGrafo() {
     // Llenado de matriz de vecinos
     for(u32 i = 0; i < g->cantidad_lados;++i) {
         u32 v1, v2;
-        int r = scanf("\ne %u %u", &v1, &v2);
+        int r = scanf("\ne %u %u", &v1, &v2); // TODO: chequear que r=2
 
         // Vértice con nuevo vécino, aumenta su grado
         g->list_vertices[v1].grado++;

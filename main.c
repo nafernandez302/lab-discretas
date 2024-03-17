@@ -1,39 +1,17 @@
 #include "APIG24.h"
-#include "EstructuraGrafo24.h"
 
-
-
-Grafo ConstruirGrafo(FILE* fp) {
-    Grafo g = malloc(sizeof(GrafoSt));
-    g->list_vertices = NULL;
-    g->lados = NULL;
-    g->list_color = NULL;
-    fscanf(fp,"p edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
-    g->lados = malloc(sizeof(u32) * g->cantidad_lados);
-    for(int i = 0; i<g->cantidad_lados;++i) {
-        int v1;
-        int v2;
-        fscanf(fp, "e %u %u", &v1, &v2);
-
-
-    }
-    return g;
-}
-
-
-u32 NumeroDeVertices(Grafo G) { 
-    return G->cantidad_vertices;
-}
-u32 NumeroDeLados(Grafo G){
-    return G->cantidad_lados;
-}
-int main(int argc, char const *argv[])
+int main()
 {
-    FILE* fp = fopen("K5.txt", "r");
-    Grafo g = ConstruirGrafo(fp);
+    Grafo g = ConstruirGrafo();
     u32 vertices = NumeroDeVertices(g);
     u32 lados = NumeroDeLados(g);
     printf("vertices: %u, lados: %u\n", vertices, lados);
-    fclose(fp);
+    /*
+    u32 v0_0 = Vecino(0,0,g);
+    u32 v0_1 = Vecino(0,1,g);
+    u32 v1_1 = Vecino(1,1,g);
+    printf("el vecino 0 de 0 es: %u\n", v0_0);
+    printf("el vecino 0 de 1 es: %u\n", v0_1);
+    printf("el vecino 1 de 1 es: %u\n", v1_1);*/
     return 0;
 }
