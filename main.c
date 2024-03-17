@@ -11,7 +11,7 @@ int main()
     /* 
     Para ingresar un vértice de forma manual:
 
-    printf("Indique un vértice para saber su grado: \n");
+    printf("Indique un vértice con un número del 0 al %d: \n", g->cantidad_vertices-1);
     scanf("%u",&i);
     if(i > vertices) { //No se contemplan los negativos.
         printf("Error: El vértice especificado no existe.\n");
