@@ -23,11 +23,12 @@ Grafo ConstruirGrafo() {
         int r = scanf("\ne %u %u", &v1, &v2); // TODO: chequear que r=2
 
         // Vértice con nuevo vécino, aumenta su grado
-        g->list_vertices[v1].grado++;
-        g->list_vertices[v2].grado++;
+
         
         g->vecinos[v1][g->list_vertices[v1].grado] = v2;
         g->vecinos[v2][g->list_vertices[v2].grado] = v1;
+        g->list_vertices[v1].grado++;
+        g->list_vertices[v2].grado++;
     }
     return g;
 }
