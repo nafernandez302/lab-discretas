@@ -25,15 +25,15 @@ void DestruirGrafo(Grafo G);
 
 //funciones para extraer datos del grafo. u32 debe estar definida en el .h de arriba
 
-u32 NumeroDeVertices(Grafo G);
-u32 NumeroDeLados(Grafo G);
-u32 Delta(Grafo G);
+u32 NumeroDeVertices(Grafo G); //listo
+u32 NumeroDeLados(Grafo G); //listo
+u32 Delta(Grafo G); //listo
 
 
 //funciones de extraccion de informacion de vertices 
 
 
-u32 Grado(u32 i,Grafo G);
+u32 Grado(u32 i,Grafo G); 
 color Color(u32 i,Grafo G);
 u32 Vecino(u32 j,u32 i,Grafo G);
 

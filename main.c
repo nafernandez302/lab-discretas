@@ -6,6 +6,23 @@ int main()
     u32 vertices = NumeroDeVertices(g);
     u32 lados = NumeroDeLados(g);
     printf("vertices: %u, lados: %u\n", vertices, lados);
+    u32 i = 3;
+    u32 j = 2;
+    /* 
+    Para ingresar un vértice de forma manual:
+
+    printf("Indique un vértice para saber su grado: \n");
+    scanf("%u",&i);
+    if(i > vertices) { //No se contemplan los negativos.
+        printf("Error: El vértice especificado no existe.\n");
+    } else {
+        printf("El vértice %d tiene grado: %u.\n",i,Grado(i, g));
+    }
+    */
+    
+    printf("El vértice %d tiene grado: %u.\n", i, Grado(i, g));
+    printf("El vértice %d tiene color: %u.\n", i, Color(i, g));
+    printf("El vecino %d del vértice %d es el vértice %d.\n", j, i, Vecino(j,i,g));
     /*
     u32 v0_0 = Vecino(0,0,g);
     u32 v0_1 = Vecino(0,1,g);
