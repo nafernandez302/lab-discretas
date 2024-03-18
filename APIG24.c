@@ -3,7 +3,12 @@
 
 #define U32_MAX 4294967295
 
+static u32 max (u32 a, u32 b){
+    return a >= b ? a : b;
+}
+
 Grafo ConstruirGrafo() {
+    u32 delta;
     Grafo g = malloc(sizeof(GrafoSt));
     scanf("p edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
     // Inicialización de grados
@@ -29,13 +34,23 @@ Grafo ConstruirGrafo() {
             exit(EXIT_FAILURE);
             return NULL;
         }
-
+        
         // Vértice con nuevo vécino, aumenta su grado
         g->vecinos[v1][g->list_vertices[v1].grado] = v2;
         g->vecinos[v2][g->list_vertices[v2].grado] = v1;
         g->list_vertices[v1].grado++;
         g->list_vertices[v2].grado++;
+
+        // Cálculo del delta
+
+        if (i==0){
+            delta = 1;
+        } else {
+            u32 max_grado = max(g->list_vertices[v1].grado, g->list_vertices[v2].grado);
+            delta = max(delta, max_grado);
+        }
     }
+    g->delta = delta;
     return g;
 }
 
