@@ -15,6 +15,7 @@ Grafo ConstruirGrafo() {
     g->list_vertices = malloc(sizeof(struct _vertices) * g->cantidad_vertices);
     for (unsigned int i = 0; i < g->cantidad_vertices; ++i) {
         g->list_vertices[i].grado = 0;
+        g->list_vertices[i].color = 0;
     }
 
     // Inicialización lista de vecinos
