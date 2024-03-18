@@ -101,6 +101,28 @@ color Color(u32 i,Grafo G) {
     } else {
         return U32_MAX;
     }
-    
 }
 
+
+// Funciones para asignar colores
+void AsignarColor(color x, u32 i, Grafo G) {
+    if(i >= NumeroDeVertices(G)){ 
+        return;
+    }
+    G->list_vertices[i].color = x;
+}
+
+void ExtraerColores(Grafo G, color* ColorsArr) {
+
+    for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
+        ColorsArr[i] = Color(i, G);
+    }
+}
+
+
+void ImportarColores(color* ColorsArr,Grafo G) {
+
+    for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
+        AsignarColor(ColorsArr[i], i, G);
+    }
+}
