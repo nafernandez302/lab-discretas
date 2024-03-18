@@ -1,6 +1,8 @@
 #include "APIG24.h"
 #include <stdint.h>
 
+#define U32_MAX 4294967295
+
 Grafo ConstruirGrafo() {
     Grafo g = malloc(sizeof(GrafoSt));
     scanf("p edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
@@ -37,6 +39,14 @@ Grafo ConstruirGrafo() {
     return g;
 }
 
+void DestruirGrafo(Grafo G){
+    for(u32 i = 0; i < G->cantidad_vertices;++i){
+        free(G->vecinos[i]);
+    }
+    free(G->vecinos);
+    free(G->list_vertices);
+    free(G);
+}
 u32 NumeroDeVertices(Grafo G) { 
     return G->cantidad_vertices;
 }
@@ -47,7 +57,7 @@ u32 NumeroDeLados(Grafo G) {
 
 u32 Vecino(u32 j,u32 i,Grafo G) { //Retorna el j-ésimo vecino del vértice i. 
     if (i >= G->cantidad_vertices || (i < G->cantidad_vertices && j >= Grado(i,G))) {
-        return 4294967295;
+        return U32_MAX;
     } else {
         return G->vecinos[i][j];
     }
@@ -63,16 +73,17 @@ u32 Grado(u32 i,Grafo G) {
     if (i < G->cantidad_vertices) {
         return G->list_vertices[i].grado;
     } else {
-        return 4294967295;
+        return U32_MAX;
     }
     
 } 
+
 
 color Color(u32 i,Grafo G) {
     if (i < G->cantidad_vertices) {
         return G->list_vertices[i].color;
     } else {
-        return 4294967295;
+        return U32_MAX;
     }
     
 }
