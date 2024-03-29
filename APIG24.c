@@ -19,12 +19,12 @@ Grafo ConstruirGrafo() {
     }
 
     // Inicialización lista de vecinos
-    g->vecinos = malloc(sizeof(uint32_t*) * g->cantidad_vertices);
+    g->vecinos = malloc(sizeof(u32*) * g->cantidad_vertices);
     for(u32 i = 0; i<g->cantidad_vertices; i++) {
-        g->vecinos[i] = malloc(sizeof(u32) * g->cantidad_lados);
+        g->vecinos[i] = malloc(sizeof(u32) * g->cantidad_vertices);
     }
 
-    // Llenado de matriz de vecinos
+    // Llenado de matriz de vecinos, leo hasta cantidad_lados lineas.
     for(u32 i = 0; i < g->cantidad_lados;++i) {
         u32 v1, v2;
         int r = scanf("\ne %u %u", &v1, &v2); // TODO: chequear que r=2
@@ -79,8 +79,6 @@ u32 Vecino(u32 j,u32 i,Grafo G) { //Retorna el j-ésimo vecino del vértice i.
     }
 }
     
-    
-
 u32 Delta(Grafo G) {
     return G->delta;
 }
