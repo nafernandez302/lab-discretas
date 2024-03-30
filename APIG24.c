@@ -27,7 +27,7 @@ Grafo ConstruirGrafo() {
     // Llenado de matriz de vecinos, leo hasta cantidad_lados lineas.
     for(u32 i = 0; i < g->cantidad_lados;++i) {
         u32 v1, v2;
-        int r = scanf("\ne %u %u", &v1, &v2); // TODO: chequear que r=2
+        int r = scanf("\ne %u %u", &v1, &v2);
         //Si no leí correctamente los dos campos, error.
         if (r!=2) {
             printf("Error: La entrada tiene un formato inválido.\n");
@@ -71,7 +71,7 @@ u32 NumeroDeLados(Grafo G) {
     return G->cantidad_lados;
 }
 
-u32 Vecino(u32 j,u32 i,Grafo G) { //Retorna el j-ésimo vecino del vértice i. 
+u32 Vecino(u32 j,u32 i,Grafo G) { 
     if (i >= G->cantidad_vertices || (i < G->cantidad_vertices && j >= Grado(i,G))) {
         return U32_MAX;
     } else {
@@ -102,7 +102,6 @@ color Color(u32 i,Grafo G) {
 }
 
 
-// Funciones para asignar colores
 void AsignarColor(color x, u32 i, Grafo G) {
     if(i >= NumeroDeVertices(G)){ 
         return;
