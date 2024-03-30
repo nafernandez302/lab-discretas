@@ -7,7 +7,7 @@ int main()
     u32 lados = NumeroDeLados(g);
     printf("vertices: %u, lados: %u\n", vertices, lados);
     u32 i = 3;
-    u32 j = 2;
+    u32 j = 2s;
     /* 
     Para ingresar un vértice de forma manual:
 
@@ -30,5 +30,6 @@ int main()
     printf("el vecino 0 de 0 es: %u\n", v0_0);
     printf("el vecino 0 de 1 es: %u\n", v0_1);
     printf("el vecino 1 de 1 es: %u\n", v1_1);*/
+    DestruirGrafo(g);
     return 0;
 }

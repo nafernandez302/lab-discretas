@@ -8,13 +8,13 @@ K5_1_PATH = examples/K5masunoslados.txt
 OBJS = $(SRCS:.c=.o)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -O3 -c $< -o $@
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
 
 test:
-	$(CC) $(CFLAGS) tests/test_1.c -c -o tests/test_1.o
+	$(CC) $(CFLAGS) tests/test_1.c -O3 -c -o tests/test_1.o
 	$(CC) $(CFLAGS) APIG24.o tests/test_1.o -o tests/test_1
 	./tests/test_1 < $(K5_1_PATH)
 
