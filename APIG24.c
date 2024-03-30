@@ -9,7 +9,13 @@ static u32 max (u32 a, u32 b){
 
 Grafo ConstruirGrafo() {
     u32 delta;
+    char c;
     Grafo g = malloc(sizeof(GrafoSt));
+    scanf(" %c", &c);
+    if (c == 'c') {
+        // Mover el puntero de lectura al principio de la línea siguiente
+        while (getchar() != '\n'); // Consumir caracteres hasta encontrar un salto de línea
+    }
     scanf("p edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
     // Inicialización de grados
     g->list_vertices = malloc(sizeof(struct _vertices) * g->cantidad_vertices);
