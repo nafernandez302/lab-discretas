@@ -1,7 +1,7 @@
 TARGET = main
 SRCS = APIG24.c main.c
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -g
+CFLAGS = -Wall -Wextra -std=c99 -O3 -g
 K5_PATH = examples/K5.txt
 K5_1_PATH = examples/K5masunoslados.txt
 
