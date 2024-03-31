@@ -1,5 +1,6 @@
 #include "APIG24.h"
 #include <stdint.h>
+#include <assert.h>
 
 #define U32_MAX 4294967295
 
@@ -9,7 +10,6 @@ static u32 max (u32 a, u32 b){
 
 Grafo ConstruirGrafo() {
     u32 delta;
-    char c;
     Grafo g = malloc(sizeof(GrafoSt));
     char c;
     while(1){
@@ -26,6 +26,7 @@ Grafo ConstruirGrafo() {
         free(g);
         return NULL;
     }
+
     // Inicialización de grados
     g->list_vertices = malloc(sizeof(struct _vertices) * g->cantidad_vertices);
     for (unsigned int i = 0; i < g->cantidad_vertices; ++i) {
@@ -56,7 +57,6 @@ Grafo ConstruirGrafo() {
         g->list_vertices[v2].grado++;
 
         // Cálculo del delta
-
         if (i==0){
             delta = 1;
         } else {
@@ -76,6 +76,7 @@ void DestruirGrafo(Grafo G){
     free(G->list_vertices);
     free(G);
 }
+
 u32 NumeroDeVertices(Grafo G) { 
     assert(G != NULL);
     return G->cantidad_vertices;
@@ -104,9 +105,7 @@ u32 Grado(u32 i,Grafo G) {
     } else {
         return U32_MAX;
     }
-    
 } 
-
 
 color Color(u32 i,Grafo G) {
     if (i < G->cantidad_vertices) {
@@ -116,7 +115,6 @@ color Color(u32 i,Grafo G) {
     }
 }
 
-
 void AsignarColor(color x, u32 i, Grafo G) {
     if(i >= NumeroDeVertices(G)){ 
         return;
@@ -125,15 +123,12 @@ void AsignarColor(color x, u32 i, Grafo G) {
 }
 
 void ExtraerColores(Grafo G, color* ColorsArr) {
-
     for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
         ColorsArr[i] = Color(i, G);
     }
 }
 
-
 void ImportarColores(color* ColorsArr,Grafo G) {
-
     for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
         AsignarColor(ColorsArr[i], i, G);
     }
