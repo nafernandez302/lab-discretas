@@ -7,7 +7,7 @@ int main()
     u32 lados = NumeroDeLados(g);
     printf("vertices: %u, lados: %u\n", vertices, lados);
     u32 i = 3;
-    u32 j = 2s;
+    u32 j = 2;
     /* 
     Para ingresar un vértice de forma manual:
 
