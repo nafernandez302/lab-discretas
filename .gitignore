@@ -25,6 +25,11 @@
 *.la
 *.lo
 
+# Grafos grandes
+
+examples/Harkon.txt
+examples/8suPGJ.txt
+
 # Shared objects (inc. Windows DLLs)
 *.dll
 *.so

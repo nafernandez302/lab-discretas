@@ -10,7 +10,21 @@ static u32 max (u32 a, u32 b){
 Grafo ConstruirGrafo() {
     u32 delta;
     Grafo g = malloc(sizeof(GrafoSt));
-    scanf("p edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
+    char c;
+    while(1){
+        scanf("%c", &c);
+        if(c == 'c'){
+            while(getchar()!= '\n');
+        }
+        else{
+            break;
+        }
+    }
+    int r = scanf(" edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
+    if(r != 2){
+        free(g);
+        return NULL;
+    }
     // Inicialización de grados
     g->list_vertices = malloc(sizeof(struct _vertices) * g->cantidad_vertices);
     for (unsigned int i = 0; i < g->cantidad_vertices; ++i) {
@@ -27,13 +41,11 @@ Grafo ConstruirGrafo() {
     // Llenado de matriz de vecinos, leo hasta cantidad_lados lineas.
     for(u32 i = 0; i < g->cantidad_lados;++i) {
         u32 v1, v2;
-        int r = scanf("\ne %u %u", &v1, &v2); // TODO: chequear que r=2
+        int r = scanf("\ne %u %u", &v1, &v2);
         //Si no leí correctamente los dos campos, error.
         if (r!=2) {
-            printf("Error: La entrada tiene un formato inválido.\n");
             free(g);
             exit(EXIT_FAILURE);
-            return NULL;
         }
         
         // Vértice con nuevo vécino, aumenta su grado
@@ -50,8 +62,8 @@ Grafo ConstruirGrafo() {
             u32 max_grado = max(g->list_vertices[v1].grado, g->list_vertices[v2].grado);
             delta = max(delta, max_grado);
         }
+        g->delta = delta;
     }
-    g->delta = delta;
     return g;
 }
 
@@ -64,10 +76,12 @@ void DestruirGrafo(Grafo G){
     free(G);
 }
 u32 NumeroDeVertices(Grafo G) { 
+    assert(G != NULL);
     return G->cantidad_vertices;
 }
 
 u32 NumeroDeLados(Grafo G) {
+    assert(G != NULL);
     return G->cantidad_lados;
 }
 
