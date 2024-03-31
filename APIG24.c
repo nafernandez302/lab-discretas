@@ -9,6 +9,7 @@ static u32 max (u32 a, u32 b){
 
 Grafo ConstruirGrafo() {
     u32 delta;
+    char c;
     Grafo g = malloc(sizeof(GrafoSt));
     char c;
     while(1){
@@ -85,7 +86,7 @@ u32 NumeroDeLados(Grafo G) {
     return G->cantidad_lados;
 }
 
-u32 Vecino(u32 j,u32 i,Grafo G) { //Retorna el j-ésimo vecino del vértice i. 
+u32 Vecino(u32 j,u32 i,Grafo G) { 
     if (i >= G->cantidad_vertices || (i < G->cantidad_vertices && j >= Grado(i,G))) {
         return U32_MAX;
     } else {
@@ -116,7 +117,6 @@ color Color(u32 i,Grafo G) {
 }
 
 
-// Funciones para asignar colores
 void AsignarColor(color x, u32 i, Grafo G) {
     if(i >= NumeroDeVertices(G)){ 
         return;
