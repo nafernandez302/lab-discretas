@@ -1,5 +1,5 @@
 TARGET = main
-SRCS = APIG24.c main.c
+SRCS = APIG24.c API2024Parte2.c main.c
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -O3 -g
 K5_PATH = examples/K5.txt
