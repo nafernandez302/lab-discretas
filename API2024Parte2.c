@@ -6,48 +6,21 @@
 #define SUCCESS '0'
 #define FAILURE '1'
 
+static u32 min (u32 a, u32 b){
+    return a < b ? a : b;
+}
+
+static u32 max (u32 a, u32 b){
+    return a > b ? a : b;
+}
+
 void swap(color* a, color* b) {
     color temp = *a;
     *a = *b;
     *b = temp;
 }
 
-int getNextGap(u32 gap)
-{
-    gap = (gap * 10) / 13;
 
-    if (gap < 1)
-        return 1;
-    return gap;
-}
-
-
-// El buen combSort
-
-/*void combSort(color a[], u32 n)
-{
-    u32 gap = n;
-    bool swapped = true;
-
-    while (gap != 1 || swapped == true)
-    {
-        // Find next gap
-        gap = getNextGap(gap);
-
-        // Initialize swapped as false so that we can
-        // check if swap happened or not
-        swapped = false;
-
-        for (u32 i=0; i<n-gap; i++)
-        {
-            if (a[i] > a[i+gap])
-            {
-                swap(&a[i], &a[i+gap]);
-                swapped = true;
-            }
-        }
-    }
-}*/
 
 void swapQuickSort(u32* a, u32* b)
 {
@@ -116,9 +89,33 @@ void quickSort(u32 arr[], int low, int high, Grafo G, char modo)
     }
 }
 
-void printArray(color arr[], u32 size) {
-    for (u32 i = 0; i < size; i++)
+static void reverseArr(u32 arr[], u32 n) {
+    for (u32 i = 0; i < (n / 2); i++) {
+        swapQuickSort(&arr[i], &arr[n - i - 1]);
+    }
+}
+
+
+// Imprime los grados de un arreglo
+static void printArrayGrado(u32 arr[], Grafo G, u32 size) {
+    for (u32 i = 0; i < size; i++) {
+        printf("%u ", Grado(arr[i], G));
+    }
+    printf("\n");
+}
+
+static void printArrayColor(u32 arr[], Grafo G, u32 size) {
+    for (u32 i = 0; i < size; i++) {
+        printf("%u ", Color(arr[i], G));
+    }
+    printf("\n");
+}
+
+// Imprime los vertices de un arreglo
+static void printArray(u32 arr[], u32 size) {
+    for (u32 i = 0; i < size; i++){
         printf("%u ", arr[i]);
+    }
     printf("\n");
 }
 
@@ -243,13 +240,24 @@ char GulDukat(Grafo G, u32* Orden) {
     u32 x1[n];
     u32 x2[n];
     u32 x3[n];
-    //Para saber la cantidad de colores independientemente de la implementación.
-    color arrayColores[n];
-    ExtraerColores(G, arrayColores);
+    color colorGradoMaximo[n];
+    color colorGradoMinimo[n];
+    // Para saber el grado máximo del color i
+    for (u32 i = 0; i < n; n++){
+        colorGradoMaximo[i] = 0;
+    }
+
+    // Para saber el grado mínimo del color i
+    for (u32 i = 0; i < n; n++){
+        colorGradoMinimo[i] = U32_MAX;
+    }
+
     //Itera sobre los vértices y va clasificándolos según las características de sus colores.
     for (u32 i = 0; i < n; i++) { // CHEQUEAR
         verticeActual = i;
         colorVertActual = Color(verticeActual, G);
+        colorGradoMaximo[colorVertActual] = max(colorGradoMaximo[i], Grado(i, G));
+        colorGradoMinimo[colorVertActual] = min(colorGradoMaximo[i], Grado(i, G));
         if (colorVertActual % 4 == 0) {
             x1[ult_posX1] = verticeActual;
             ult_posX1++;
@@ -264,7 +272,29 @@ char GulDukat(Grafo G, u32* Orden) {
         }
         //Hasta ahora tenemos los bloques listos, falta ordenarlos de acuerdo a la especificación.
     }
-    int largoX1 = ult_posX1;
+
+    
+    u32 largoX1 = ult_posX1;
+    u32 largoX2 = ult_posX2;
+    u32 largoX3 = ult_posX3;
+    u32 colorGradoSum[largoX2];
+
+    for (u32 i = 0; i < largoX2; i++){
+        u32 colorDisponible = Color(x2[i], G);
+        colorGradoSum[colorDisponible] = colorGradoMaximo[colorDisponible] + colorGradoMinimo[colorDisponible];
+    }
+    
+
+    printf("---Arreglos sin ordenar--- \n");
+    printf("X1\n");
+    printArrayGrado(x1, G, largoX1);
+    printArrayColor(x1, G, largoX1);
+    printf("X2\n");
+    printArrayGrado(x2, G, largoX2);
+    printArrayColor(x2, G, largoX2);
+    printf("X3\n");
+    printArrayGrado(x3, G, largoX3);
+    printArrayColor(x3, G, largoX3);
     //Ordenar X1 según M(x)
     /*
     u32 x1Sorted[];
@@ -282,9 +312,25 @@ char GulDukat(Grafo G, u32* Orden) {
         x1Sorted[x1SortedPos] = maxVert;
     */
     quickSort(x1, 0, largoX1 - 1, G, 'M');
-    //REVERSE X1
+    quickSort(x2, 0, largoX2 - 1, G, 'M');
+    quickSort(x3, 0, largoX3 - 1, G, 'M');
 
-    printArray(x1, largoX1);
+
+    //REVERSE x1, x2, x3
+
+    reverseArr(x1, largoX1);
+    reverseArr(x2, largoX2);
+    reverseArr(x3, largoX3);
+    printf("\n ---Arreglos ordenados y dados vuelta tras quicksort--- \n");
+    printf("X1\n");
+    printArrayGrado(x1, G, largoX1);
+    printArrayColor(x1, G, largoX1);
+    printf("X2\n");
+    printArrayGrado(x2, G, largoX2);
+    printArrayColor(x2, G, largoX2);
+    printf("X3\n");
+    printArrayGrado(x3, G, largoX3);
+    printArrayColor(x3, G, largoX3);
     return SUCCESS;
 }
 
