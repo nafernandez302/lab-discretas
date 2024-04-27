@@ -184,7 +184,6 @@ void quickSort1(u32 arr[], int low, int high, Grafo G, char modo)
 u32 Greedy(Grafo G, u32* Orden) {
 
     u32 n = NumeroDeVertices(G);
-    //u32 m = NumeroDeLados(G);
 
     if (!biyectivo(Orden, n)) {
         return U32_MAX;
@@ -212,7 +211,6 @@ u32 Greedy(Grafo G, u32* Orden) {
         // Buscamos el menor "hueco" disponible 
         // Ej: [0, 0, 0, 1, 1, 2, 4,..] --> 3 es el menor hueco disponible
         for (u32 j = 0; j < actual_grado; j++) {
-            printf("min_sin_usar: %u\n actual_col[%u]: %u\n", min_sin_usar, j, actual_col[j]);
             if (min_sin_usar == actual_col[j]) {
                 min_sin_usar++;
             }
@@ -220,7 +218,6 @@ u32 Greedy(Grafo G, u32* Orden) {
                 break;
             }
         }
-        printf("\n numero elegido: %u\n", min_sin_usar);
         globalCol[i] = min_sin_usar;
         AsignarColor(globalCol[i], i, G);
         if (cantidad_colores == min_sin_usar) {
