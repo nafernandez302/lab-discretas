@@ -29,7 +29,7 @@ void swapQuickSort(u32* a, u32* b)
     *b = temp;
 }
 
-int partitionM(u32 arr[], int low, int high, Grafo G)
+int partitionM(u32 arr[], int low, int high, Grafo G, color arrayMaximos[])
 {
 
     u32 pivot = Grado(arr[low], G);
@@ -43,7 +43,29 @@ int partitionM(u32 arr[], int low, int high, Grafo G)
         while (Grado(arr[j], G) > pivot && j >= low + 1) {
             j--;
         }
-        if (i < j) {
+        if (arrayMaximos[i] < arrayMaximos[j]) {
+            swapQuickSort(&arr[i], &arr[j]);
+        }
+    }
+    swapQuickSort(&arr[low], &arr[j]);
+    return j;
+}
+
+int partitionm(u32 arr[], int low, int high, Grafo G, color arrayMinimos[])
+{
+
+    u32 pivot = Grado(arr[low], G);
+    int i = low;
+    int j = high;
+
+    while (i < j) {
+        while (Grado(arr[i], G) <= pivot && i <= high - 1) {
+            i++;
+        }
+        while (Grado(arr[j], G) > pivot && j >= low + 1) {
+            j--;
+        }
+        if (arrayMinimos[i] < arrayMinimos[j]) {
             swapQuickSort(&arr[i], &arr[j]);
         }
     }
@@ -73,19 +95,22 @@ int partition(u32 arr[], int low, int high)
     return j;
 }
 
-void quickSort(u32 arr[], int low, int high, Grafo G, char modo)
+void quickSort(u32 arr[], int low, int high, Grafo G, char modo, color arrayMaximos[], color arrayMinimos[], color colorGradoSum[])
 {
 
     if (low < high) {
         int partitionIndex;
         if (modo == 'M') {
-            partitionIndex = partitionM(arr, low, high, G);
+            partitionIndex = partitionM(arr, low, high, G, arrayMaximos);
         }
-        else {
+        else if (modo == 'm') {
+            partitionIndex = partitionm(arr, low, high, G, arrayMinimos);
+        } else {
             partitionIndex = partition(arr, low, high);
+
         }
-        quickSort(arr, low, partitionIndex - 1, G, modo);
-        quickSort(arr, partitionIndex + 1, high, G, modo);
+        quickSort(arr, low, partitionIndex - 1, G, modo, arrayMaximos, arrayMinimos, colorGradoSum);
+        quickSort(arr, partitionIndex + 1, high, G, modo, arrayMaximos, arrayMinimos, colorGradoSum);
     }
 }
 
@@ -145,6 +170,16 @@ bool biyectivo(u32* arr, u32 tam) {
     return es_biy;
 }
 
+void quickSort1(u32 arr[], int low, int high, Grafo G, char modo)
+{
+
+    if (low < high) {
+        int partitionIndex;
+        partitionIndex = partition(arr, low, high);
+        quickSort1(arr, low, partitionIndex - 1, G, modo);
+        quickSort1(arr, partitionIndex + 1, high, G, modo);
+    }
+}
 
 u32 Greedy(Grafo G, u32* Orden) {
 
@@ -173,7 +208,7 @@ u32 Greedy(Grafo G, u32* Orden) {
 
         color min_sin_usar = 0;
         //combSort(actual_col, actual_grado);
-        quickSort(actual_col, 0, actual_grado - 1, G, 'g');
+        quickSort1(actual_col, 0, actual_grado - 1, G, 'g');
         // Buscamos el menor "hueco" disponible 
         // Ej: [0, 0, 0, 1, 1, 2, 4,..] --> 3 es el menor hueco disponible
         for (u32 j = 0; j < actual_grado; j++) {
@@ -311,9 +346,9 @@ char GulDukat(Grafo G, u32* Orden) {
         }
         x1Sorted[x1SortedPos] = maxVert;
     */
-    quickSort(x1, 0, largoX1 - 1, G, 'M');
-    quickSort(x2, 0, largoX2 - 1, G, 'M');
-    quickSort(x3, 0, largoX3 - 1, G, 'M');
+    quickSort(x1, 0, largoX1 - 1, G, 'M', colorGradoMaximo, colorGradoMinimo, colorGradoSum);
+    quickSort(x2, 0, largoX2 - 1, G, 'S', colorGradoSum, colorGradoMinimo, colorGradoSum);
+    quickSort(x3, 0, largoX3 - 1, G, 'm', colorGradoMinimo, colorGradoMinimo, colorGradoSum);
 
 
     //REVERSE x1, x2, x3
