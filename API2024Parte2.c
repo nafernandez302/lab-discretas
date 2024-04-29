@@ -247,57 +247,74 @@ void quickSort1(u32 arr[], u32 low, u32 high)
     }
 }
 
-u32 Greedy(Grafo G, u32* Orden) {
+u32 Greedy(Grafo G, u32* Orden) { 
 
     u32 n = NumeroDeVertices(G);
-
-
-    u32 prueba[10] = {8, 9, 1, 6, 0, 4, 3, 2, 1, 1};
-    quickSort1(prueba, 0, 9);
-    printf("prueba\n");
-    printArray(prueba, 10);
+    printf("n: %u, m:%u\n", n, NumeroDeLados(G));
     if (!biyectivo(Orden, n)) {
         return U32_MAX;
     }
 
     color globalCol[n];
-    AsignarColor(1, Orden[0], G);
-    globalCol[0] = Color(0, G);
+    u32 usados[n];
+    
+    for (u32 i = 0; i < n; i++)
+    {
+        globalCol[i] = 0;
+        usados[i] = 0;
+    }
+    globalCol[Orden[0]] = 1;
+    AsignarColor(globalCol[Orden[0]], Orden[0], G);
+
     u32 cantidad_colores = 1;
 
     for (u32 i = 1; i < n; i++) {
+        //printf("\n\nit: %u\n globalcol: \n", i);
+        //printArray(globalCol, n);
         u32 actual_vert = Orden[i];
         u32 actual_grado = Grado(actual_vert, G);
         color actual_col[actual_grado];
-        for (u32 j = 0; j < actual_grado; j++) {
-
-            // Marco el arreglo de colores y lo relleno con sus colores
-            u32 actual_vecino = Vecino(j, i, G);
-            actual_col[j] = Color(actual_vecino, G);
+        for(u32 j = 0; j < actual_grado; j++){
+            usados[j] = 0;
         }
+        for (u32 j = 0; j < actual_grado; j++) {
+            
+            // Marco el arreglo de colores y lo relleno con sus colores
+            u32 actual_vecino = Vecino(j, Orden[i], G);
+            actual_col[j] = globalCol[actual_vecino];
+            //printf("global_col: %u\n", globalCol[actual_vecino]);
+            if(actual_col[j] != 0){
+                usados[actual_col[j] - 1] = 1;
+               // printf("se marcó el color %u\n", actual_col[j] -1);
+            }
+        }
+        //printArray(usados, actual_grado);
 
         color min_sin_usar = 1;
-        //combSort(actual_col, actual_grado);
-        quickSort1(actual_col, 0, actual_grado - 1);
+        //quickSort1(actual_col, 0, actual_grado - 1);
+        //printArray(actual_col, actual_grado);
         // Buscamos el menor "hueco" disponible 
         // Ej: [0, 0, 0, 1, 1, 2, 4,..] --> 3 es el menor hueco disponible
         for (u32 j = 0; j < actual_grado; j++) {
-            if (min_sin_usar == actual_col[j]) {
-                min_sin_usar++;
-            }
-            else if (min_sin_usar < actual_col[j]) {
+            //printArray(usados, actual_grado);
+            if (usados[j] == 0) {
+                min_sin_usar = j+1;
                 break;
             }
         }
-        globalCol[i] = min_sin_usar;
-        AsignarColor(globalCol[i], i, G);
-        if (cantidad_colores == min_sin_usar) {
-            cantidad_colores++;
+        assert(min_sin_usar != 0);
+        globalCol[Orden[i]] = min_sin_usar;
+        AsignarColor(min_sin_usar, actual_vert , G);
+         //printf("vertice %u pintado de %u\n", actual_vert, min_sin_usar );
+       // printf("cant_color: %u, min_sin_usar: %u\n", cantidad_colores, min_sin_usar);
+        if (cantidad_colores < min_sin_usar) {
+            cantidad_colores = min_sin_usar;
         }
     }
-    printArrayColor(Orden, G, n);
 
-    return cantidad_colores;
+    //printArrayColor(Orden, G, n);
+    //printArray(Orden, n);
+    return cantidad_colores+1;
 }
 
 //Retorna el mínimo grado de los vértices con color x del grafo G.
@@ -349,7 +366,8 @@ char GulDukat(Grafo G, u32* Orden) {
         contar_colores[i] = 0;
     }
     for(u32 i = 0; i<n;i++){
-        contar_colores[Color(i,G)] = 1;
+        assert(Color(i,G) != 0);
+        contar_colores[Color(i,G)-1] = 1;
     }
     for(u32 i = 0; i<n; i++){
         if(contar_colores[i] == 1){
@@ -369,10 +387,15 @@ char GulDukat(Grafo G, u32* Orden) {
 
     //Itera sobre los vértices y va clasificándolos según las características de sus colores.
     for (u32 i = 0; i < n; i++) { // CHEQUEAR
+        
         verticeActual = i;
+        if(Color(verticeActual, G) == 0){
+            printf("el vertice %u no se pintó bien\n", i);
+        }
         colorVertActual = Color(verticeActual, G) - 1;
         bucket[colorVertActual].gradoMax = max(bucket[colorVertActual].gradoMax, Grado(i, G));
         bucket[colorVertActual].gradoMin = min(bucket[colorVertActual].gradoMin, Grado(i, G));
+        //printf("cantVert: %u, vertactual: %u\n", bucket[colorVertActual].cantVert, verticeActual);
         u32 pos = bucket[colorVertActual].cantVert;
         bucket[colorVertActual].vertices[pos] = verticeActual;
         assert(Color(verticeActual, G) == Color(bucket[colorVertActual].vertices[pos], G));
@@ -386,11 +409,12 @@ char GulDukat(Grafo G, u32* Orden) {
         bucket[i].sumM = bucket[i].gradoMax + bucket[i].gradoMin; 
     }
 
-
+    /*
     for(u32 i = 0; i < r; i++){
         printf("bucket %u, de tamaño %u\n", i, bucket[i].cantVert);
         printArrayColor(bucket[i].vertices, G, bucket[i].cantVert);
     }
+    */
 
     u32 countX1 = 0;
     u32 countX2 = 0;
@@ -414,18 +438,10 @@ char GulDukat(Grafo G, u32* Orden) {
         }
     }
 
-    printf("x1: %u, x2: %u, x3: %u", countX1, countX2, countX3);
-
-    /*
     
-    x1 --b4
-       --b8
-       --b12
+    // b1 < b2 sii    bucket1.maxGrado < bucket2.maxGrado
 
-
-    b1 < b2 sii    bucket1.maxGrado < bucket2.maxGrado
-
-    */
+    
     quickSort(x1, 0, countX1 - 1, 'M');
     quickSort(x2, 0, countX2 - 1, 's');
     quickSort(x3, 0, countX3 - 1, 'm');
@@ -435,7 +451,6 @@ char GulDukat(Grafo G, u32* Orden) {
         for(u32 j = 0; j < x1[i].cantVert; j++){
             Orden[cant_actual] = x1[i].vertices[j];
             cant_actual++;
-            printf("cantactual: %u\n", cant_actual);
         }
     }
 
@@ -443,26 +458,17 @@ char GulDukat(Grafo G, u32* Orden) {
         for(u32 j = 0; j < x2[i].cantVert; j++){
             Orden[cant_actual] = x2[i].vertices[j];
             cant_actual++;
-            printf("cantactual: %u\n", cant_actual);
         }
     }
     for(u32 i = 0; i < countX3; ++i){
         for(u32 j = 0; j < x3[i].cantVert; j++){
             Orden[cant_actual] = x3[i].vertices[j];
             cant_actual++;
-            printf("cantactual: %u\n", cant_actual);
         }
     }
 
-    if(biyectivo(Orden, NumeroDeVertices(G))){
-        printf("\n es biyectivo\n");
-    }
-    else{
-        printf("\n no es biyectivo\n");
-    }
 
-
-    
+    /*
     printf("Orden\n");
     printArray(Orden, NumeroDeVertices(G));
 
@@ -471,12 +477,10 @@ char GulDukat(Grafo G, u32* Orden) {
 
     printf("Color\n");
     printArrayColor(Orden, G, NumeroDeVertices(G));
-    
+    */
     // Ahora ordenamos los buckets
 
-    printf("---Arreglos ordenados--- \n");
-
-
+    assert(biyectivo(Orden, NumeroDeVertices(G)));
     return SUCCESS;
 }
 
