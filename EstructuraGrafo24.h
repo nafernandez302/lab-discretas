@@ -1,23 +1,22 @@
-#ifndef ESTRUCTURA_GRAFO_24_H
-#define ESTRUCTURA_GRAFO_24_H
+#ifndef MIGRAFO_H
 
-#include <stdint.h>
-typedef uint32_t u32;
-typedef u32 color;
+#define MIGRAFO_H
 
-typedef struct _vertices{
-    u32 grado;
+typedef unsigned int u32;
+typedef unsigned int color;
+
+typedef struct _data {
     color color;
-} vertices;
+    u32 grado; // logintud del array vecino para cada vertice.
+    u32 size;
+}data;
 
-typedef struct _Grafo {
-    vertices* list_vertices;
-    u32** vecinos;
-    u32 cantidad_vertices;
-    u32 cantidad_lados;
-    u32 delta;
+typedef struct _grafo {
+    u32 n; //numero de vertices
+    u32 m; //numero de lados
+    u32 delta; //mayor numero de vecinos de un vertice x
+    data *vertices; // array de structs con color y grado
+    u32 **vecinos; //matriz con los vecinos
 } GrafoSt;
 
 #endif
-
-

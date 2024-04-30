@@ -1,135 +1,202 @@
 #include "APIG24.h"
-#include <stdint.h>
-#include <assert.h>
+#include "EstructuraGrafo24.h"
+#include <limits.h>
 
-#define U32_MAX 4294967295
+#define SIZE 200 // recomendado para poca memoria ram 2-4gb : 200, en caso de tener mas memoria se puede aumentar este numero
 
-static u32 max (u32 a, u32 b){
-    return a >= b ? a : b;
-}
-
-Grafo ConstruirGrafo() {
-    u32 delta;
-    Grafo g = malloc(sizeof(GrafoSt));
-    char c;
-    while(1){
-        scanf("%c", &c);
-        if(c == 'c'){
-            while(getchar()!= '\n');
-        }
-        else{
-            break;
-        }
+Grafo ConstruirGrafo()
+{
+    char inicio;
+    // busca si hay lineas comentario en el archivo y las saltea
+    while (scanf(" %c",&inicio) == 1 && inicio == 'c')
+    {
+        while((char)getchar() != '\n');
     }
-    int r = scanf(" edge %u %u", &(g->cantidad_vertices), &(g->cantidad_lados));
-    if(r != 2){
-        free(g);
+    // si encuentra algo distinto de comentario o el inicio del grafo, devuelve grafo vacio
+    if(inicio != 'p') return NULL;
+
+    u32 numero_de_vertices , numero_de_lados;
+    int error_code = scanf(" edge %u %u", &numero_de_vertices , &numero_de_lados);
+    if(error_code != 2)
+    {
+        return NULL;
+    }
+    Grafo g = malloc(sizeof(struct _grafo));
+    g->n = numero_de_vertices;
+    g->m = numero_de_lados;
+    g->delta = 0u;
+    g->vertices = malloc((g->n)*sizeof(struct _data));
+    g->vecinos = malloc((g->n)*sizeof(u32*));
+    // ciclo para inicilizar el struct data
+    // y tambien aprovecho el ciclo para crear la matriz N x N
+    for (u32 i = 0; i < g->n; ++i)
+    {
+        g->vertices[i].color = 0;
+        g->vertices[i].grado = 0;
+        g->vertices[i].size = SIZE;
+        g->vecinos[i] = malloc(SIZE*sizeof(u32));
+    }
+    u32 check_m = 0u;
+    for (u32 i = 0u; i < g->m; ++i)
+    {
+        u32 vertice_x , vertice_y; // juntos forman el lado xy
+        int error_code = scanf("\ne %u %u", &vertice_x , &vertice_y);
+        if(error_code != 2)
+        {
+        	DestruirGrafo(g);
+        	return NULL;
+        }
+        // llenado de la matriz de vecinos en un mismo ciclo para ahorrar costo
+        g->vecinos[vertice_x][(g->vertices[vertice_x].grado)] = vertice_y; // con vertice_x un numero entre 0 y n por lo tanto no se sale de la matriz
+        g->vecinos[vertice_y][(g->vertices[vertice_y].grado)] = vertice_x; // con vertice_y un numero entre 0 y n por lo tanto no se sale de la matriz
+        
+        // si la cantidad de vecinos llega a la cantidad SIZE definidad arriba esta cantidad se duplica para darle mas espacio al array
+        if(g->vertices[vertice_x].grado >= g->vertices[vertice_x].size)
+        {
+            g->vertices[vertice_x].size = 2*g->vertices[vertice_x].size;
+            g->vecinos[vertice_x] = realloc(g->vecinos[vertice_x] , g->vertices[vertice_x].size* sizeof(u32));
+        }
+        g->vertices[vertice_x].grado += 1;
+        if(g->vertices[vertice_y].grado >= g->vertices[vertice_y].size)
+        {
+            g->vertices[vertice_y].size = 2*g->vertices[vertice_y].size;
+            g->vecinos[vertice_y] = realloc(g->vecinos[vertice_y] , g->vertices[vertice_y].size* sizeof(u32));
+        }
+        g->vertices[vertice_y].grado += 1;
+
+        check_m++;
+    }
+    if(check_m!=g->m)
+    {
+        DestruirGrafo(g);
         return NULL;
     }
 
-    // Inicialización de grados
-    g->list_vertices = malloc(sizeof(struct _vertices) * g->cantidad_vertices);
-    for (unsigned int i = 0; i < g->cantidad_vertices; ++i) {
-        g->list_vertices[i].grado = 0;
-        g->list_vertices[i].color = 0;
-    }
-
-    // Inicialización lista de vecinos
-    g->vecinos = malloc(sizeof(u32*) * g->cantidad_vertices);
-    for(u32 i = 0; i<g->cantidad_vertices; i++) {
-        g->vecinos[i] = malloc(sizeof(u32) * g->cantidad_vertices);
-    }
-
-    // Llenado de matriz de vecinos, leo hasta cantidad_lados lineas.
-    for(u32 i = 0; i < g->cantidad_lados;++i) {
-        u32 v1, v2;
-        int r = scanf("\ne %u %u", &v1, &v2);
-        //Si no leí correctamente los dos campos, error.
-        if (r!=2) {
-            free(g);
-            exit(EXIT_FAILURE);
+    // calculo delta
+    for (u32 i = 0u; i < g->n; ++i)
+    {
+        if(g->delta < g->vertices[i].grado)
+        {
+            g->delta = g->vertices[i].grado;
         }
-        
-        // Vértice con nuevo vécino, aumenta su grado
-        g->vecinos[v1][g->list_vertices[v1].grado] = v2;
-        g->vecinos[v2][g->list_vertices[v2].grado] = v1;
-        g->list_vertices[v1].grado++;
-        g->list_vertices[v2].grado++;
-
-        // Cálculo del delta
-        if (i==0){
-            delta = 1;
-        } else {
-            u32 max_grado = max(g->list_vertices[v1].grado, g->list_vertices[v2].grado);
-            delta = max(delta, max_grado);
-        }
-        g->delta = delta;
     }
+    
     return g;
 }
 
-void DestruirGrafo(Grafo G){
-    for(u32 i = 0; i < G->cantidad_vertices;++i){
-        free(G->vecinos[i]);
-    }
-    free(G->vecinos);
-    free(G->list_vertices);
-    free(G);
-}
-
-u32 NumeroDeVertices(Grafo G) { 
-    assert(G != NULL);
-    return G->cantidad_vertices;
-}
-
-u32 NumeroDeLados(Grafo G) {
-    assert(G != NULL);
-    return G->cantidad_lados;
-}
-
-u32 Vecino(u32 j,u32 i,Grafo G) { 
-    if (i >= G->cantidad_vertices || (i < G->cantidad_vertices && j >= Grado(i,G))) {
-        return U32_MAX;
-    } else {
-        return G->vecinos[i][j];
-    }
-}
-    
-u32 Delta(Grafo G) {
-    return G->delta;
-}
-
-u32 Grado(u32 i,Grafo G) {
-    if (i < G->cantidad_vertices) {
-        return G->list_vertices[i].grado;
-    } else {
-        return U32_MAX;
-    }
-} 
-
-color Color(u32 i,Grafo G) {
-    if (i < G->cantidad_vertices) {
-        return G->list_vertices[i].color;
-    } else {
-        return U32_MAX;
+void DestruirGrafo(Grafo g)
+{
+    if(g != NULL) 
+    {
+        for (u32 i = 0; i < g->n; ++i)
+        {
+            free(g->vecinos[i]);
+        }
+        free(g->vecinos);
+        free(g->vertices);
+        free(g);
+        g = NULL;
     }
 }
 
-void AsignarColor(color x, u32 i, Grafo G) {
-    if(i >= NumeroDeVertices(G)){ 
-        return;
+u32 NumeroDeVertices(Grafo g)
+{
+    if(g != NULL)
+    {
+        return g->n;
     }
-    G->list_vertices[i].color = x;
+    else
+    {
+        return 0u; 
+    }
 }
 
-void ExtraerColores(Grafo G, color* ColorsArr) {
-    for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
-        ColorsArr[i] = Color(i, G);
+u32 NumeroDeLados(Grafo g)
+{
+    if(g != NULL)
+    {
+        return g->m;
+    }
+    else
+    {
+        return 0u;  
     }
 }
 
-void ImportarColores(color* ColorsArr,Grafo G) {
-    for(u32 i = 0u; i < NumeroDeVertices(G); ++i) {
-        AsignarColor(ColorsArr[i], i, G);
+u32 Delta(Grafo g)
+{
+    if(g != NULL)
+    {
+        return g->delta;
+    }
+    else
+    {
+        return 0u;    
+    }
+}
+
+u32 Grado(u32 i,Grafo g)
+{
+    if(g != NULL && i < g->n)
+    {
+        return g->vertices[i].grado;
+    }
+    else
+    {
+        return 0u;
+    }
+}
+
+color Color(u32 i,Grafo g)
+{
+    if(g != NULL && i < g->n)
+    {
+        return g->vertices[i].color;
+    }
+    else
+    {
+        return INT_MAX;
+    }
+}
+
+u32 Vecino(u32 j,u32 i,Grafo g)
+{
+    if(g != NULL && i < g->n && j < g->vertices[i].grado)
+    {
+        return g->vecinos[i][j];
+    }
+    else
+    {
+        return INT_MAX;
+    }
+}
+
+void AsignarColor(color x,u32 i,Grafo  g)
+{
+    if(g != NULL && i < g->n)
+    {
+        g->vertices[i].color = x;
+    }
+}
+
+void ExtraerColores(Grafo g,color* c)
+{
+    if(g != NULL)
+    {
+        for (u32 i = 0; i < g->n; ++i)
+        {
+            c[i] = g->vertices[i].color;
+        }
+    }
+}
+
+void ImportarColores(color* c,Grafo  g)
+{
+    if(g != NULL)
+    {
+        for (u32 i = 0; i < g->n; ++i)
+        {
+            g->vertices[i].color = c[i];
+        }
     }
 }
