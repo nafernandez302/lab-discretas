@@ -1,27 +1,47 @@
 #include "APIG24.h"
 #include "API2024Parte2.h"
+#include "assert.h"
 
-#define N 9
+
+#define ITERACIONES 50
 int main()
 {
+    Grafo G = ConstruirGrafo();
+    u32 n = NumeroDeVertices(G);
     //u32 orden1[N] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
 
-    u32 orden2[256];
-    for (size_t i = 0; i < 256; i++)
+    u32 orden2[n];
+
+    for (u32 i = 0; i < n; i++)
     {
         orden2[i] = i;
     }
-    
-   // u32 orden2[N] = {0, 3, 2, 1, 4};
-   // u32 orden3[N] = {4, 3, 0, 1, 2};
 
-    Grafo G = ConstruirGrafo();
-    u32 cantidad = Greedy(G, orden2);
-    printf("%u\n", cantidad);
+    assert(biyectivo(orden2, n));
+
+    u32 cantidad = 0;
+    char succesDukat;
+    char succesGarak;
+
     printf("delta: %u\n", Delta(G));
-    char xd = GulDukat(G,orden2);
-    printf("%c", xd);
+    for (int i = 0; i < ITERACIONES; i++) {
+        assert(biyectivo(orden2, n));
+        cantidad = Greedy(G, orden2);
+        printf("se pinto con %u colores\n", cantidad);
+        succesGarak = ElimGarak(G, orden2);
+        assert(succesGarak == '0');
+    }
+
+
+    for (int i = 0; i < ITERACIONES; i++) {
+        assert(biyectivo(orden2, n));
+        cantidad = Greedy(G, orden2);
+        printf("se pinto con %u colores\n", cantidad);
+        succesDukat = GulDukat(G, orden2);
+        assert(succesDukat == '0');
+    }
     DestruirGrafo(G);
+
 
     return 0;
 }
