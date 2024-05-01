@@ -26,7 +26,7 @@ static u32 max(u32 a, u32 b) {
     return a > b ? a : b;
 }
 
-static void printArrayGrado(u32 arr[], Grafo G, u32 size) {
+void printArrayGrado(u32 arr[], Grafo G, u32 size) {
     for (u32 i = 0; i < size; i++) {
         printf("%u ", Grado(arr[i], G));
     }
@@ -42,7 +42,7 @@ static void printArrayColor(u32 arr[], Grafo G, u32 size) {
 
 
 // Imprime los vertices de un arreglo
-static void printArray(u32 arr[], u32 size) {
+void printArray(u32 arr[], u32 size) {
     for (u32 i = 0; i < size; i++) {
         printf("%u ", arr[i]);
     }
@@ -156,18 +156,17 @@ u32 partitione(bucket arr[], u32 low, u32 high)
     return j;
 }
 
-u32 partition(u32 arr[], u32 low, u32 high)
+u32 partitionGrado(u32 arr[], u32 low, u32 high, Grafo G) //Ordena por Grado de los vértices (mayor a menor).
 {
-
-    u32 pivot = arr[low];
+    u32 pivot = Grado(arr[low],G);
     u32 i = low;
     u32 j = high;
-
     while (i < j) {
-        while (arr[i] <= pivot && i <= high - 1) {
+        while (Grado(arr[i], G) <= pivot && i <= high - 1) { //PUEDE SER FUENTE DE ERROR
             i++;
         }
-        while (arr[j] > pivot && j >= low + 1) {
+        while (Grado(arr[j], G) > pivot && j >= low + 1) {
+            if (j == 0) break;
             j--;
         }
         if (i < j) {
@@ -229,14 +228,13 @@ bool biyectivo(u32* arr, u32 tam) {
     return es_biy;
 }
 
-void quickSort1(u32 arr[], u32 low, u32 high)
+void quickSortGrado(u32 arr[], u32 low, u32 high, Grafo G)
 {
-
     if (low < high && high != U32_MAX) {
         u32 partitionIndex = 0;
-        partitionIndex = partition(arr, low, high);
-        quickSort1(arr, low, partitionIndex - 1);
-        quickSort1(arr, partitionIndex + 1, high);
+        partitionIndex = partitionGrado(arr, low, high, G);
+        quickSortGrado(arr, low, partitionIndex - 1, G);
+        quickSortGrado(arr, partitionIndex + 1, high, G);
     }
 }
 
