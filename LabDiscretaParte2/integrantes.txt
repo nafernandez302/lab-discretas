@@ -1,0 +1,3 @@
+Nombre                         Mail
+Nahuel Fernandez               nafernandez@mi.unc.edu.ar
+Luciano Rojo                   lucianorojo064@mi.unc.edu.ar
