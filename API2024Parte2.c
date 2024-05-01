@@ -162,10 +162,10 @@ u32 partitionGrado(u32 arr[], u32 low, u32 high, Grafo G) //Ordena por Grado de 
     u32 i = low;
     u32 j = high;
     while (i < j) {
-        while (Grado(arr[i], G) <= pivot && i <= high - 1) { //PUEDE SER FUENTE DE ERROR
+        while (Grado(arr[i], G) >= pivot && i <= high - 1) { //PUEDE SER FUENTE DE ERROR
             i++;
         }
-        while (Grado(arr[j], G) > pivot && j >= low + 1) {
+        while (Grado(arr[j], G) < pivot && j >= low + 1) {
             if (j == 0) break;
             j--;
         }
@@ -204,7 +204,7 @@ void quickSort(bucket arr[], u32 low, u32 high, char modo)
 
 bool biyectivo(u32* arr, u32 tam) {
     bool es_biy = true;
-    u32 conj_nat[tam];
+    u32* conj_nat = malloc(sizeof(u32) * tam);
 
     // Inicializo en 0;
     for (u32 i = 0; i < tam; ++i) {
@@ -225,6 +225,7 @@ bool biyectivo(u32* arr, u32 tam) {
             break;
         }
     }
+    free(conj_nat);
     return es_biy;
 }
 
@@ -254,13 +255,12 @@ bool coloreoPropio(Grafo G) {
 u32 Greedy(Grafo G, u32* Orden) {
 
     u32 n = NumeroDeVertices(G);
-    printf("n: %u, m:%u\n", n, NumeroDeLados(G));
     if (!biyectivo(Orden, n)) {
         return U32_MAX;
     }
 
-    color globalCol[n];
-    u32 usados[n];
+    color*  globalCol = malloc(sizeof(u32) * n);
+    u32* usados = malloc(sizeof(u32) * n);
 
     for (u32 i = 0; i < n; i++)
     {
@@ -311,6 +311,8 @@ u32 Greedy(Grafo G, u32* Orden) {
     //printArray(Orden, n);
 
     assert(coloreoPropio(G));
+    free(globalCol);
+    free(usados);
     return cantidad_colores;
 }
 
