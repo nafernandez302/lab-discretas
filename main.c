@@ -5,6 +5,11 @@
 
 #define U32_MAX 4294967295
 #define N 9
+typedef struct _bucketG {
+    u32 cantVert;
+    u32* vertices;
+} bucketG;
+
 int main()
 {
     srand(time(NULL));
@@ -13,14 +18,13 @@ int main()
 
     printf("n: %u, m:%u\n", n, NumeroDeLados(G));
     printf("Delta: %u\n", Delta(G));
-
+    u32 cantidad_it = 0;
     u32* Orden1 = malloc(sizeof(u32) * n);
     u32* Orden2 = malloc(sizeof(u32) * n);
     u32* Orden3 = malloc(sizeof(u32) * n);
     u32* Orden4 = malloc(sizeof(u32) * n);
     u32* Orden5 = malloc(sizeof(u32) * n);
     u32* arr_color = malloc(sizeof(u32) * n);
-
     /*
 
     Corremos Greedy en 5 órdenes distintos.
@@ -40,7 +44,7 @@ int main()
 
     // 2) Orden natural inverso de los elementos.
 
-    for (int i = 0; i < n; i++) {
+    for (u32 i = 0; i < n; i++) {
         Orden2[i] = n - i - 1;
     }
 
@@ -60,10 +64,48 @@ int main()
     }
 
     // 4) Orden por grado de mayor a menor.
-    for (u32 i = 0; i < n; i++) {
-        Orden4[i] = i;
+    struct _bucketG* o = malloc(sizeof(struct _bucketG) * (Delta(G)+1));
+
+    for (u32 i = 0; i < Delta(G)+1; i++) {
+        o[i].cantVert = 0;
+        o[i].vertices = malloc(sizeof(u32) * n);
     }
-    quickSortGrado(Orden4, 0, n - 1, G);
+
+    u32 pos;
+    for (u32 i = 0; i < n; i++) { 
+        pos = o[Grado(i,G)].cantVert;
+        o[Grado(i,G)].vertices[pos] = i;
+        o[Grado(i,G)].cantVert++;
+    }
+
+
+    u32 cant_actual = 0;
+    u32 cant_total = 0;
+    for (u32 i = 0; i < Delta(G) + 1; ++i) {
+        cant_total += o[i].cantVert;
+        for (u32 j = 0; j < o[i].cantVert; j++) {
+            Orden4[n -cant_actual - 1] = o[i].vertices[j];
+            cant_actual++;
+        }
+    }
+
+
+    bool buenOrden = true;
+    for (u32 i = 0; i < n-1; i++) {
+        if (Grado(Orden4[i], G) < Grado(Orden4[i + 1], G)) {
+            buenOrden = false;
+            break;
+        }
+    }
+
+    assert(biyectivo(Orden4, n));
+    assert(buenOrden);
+
+    for (u32 i = 0; i < Delta(G)+1; i++) {
+        free(o[i].vertices);
+    }
+
+    free(o);
 
     // 5) Orden con un offset de 1
     for (u32 i = 0; i < n - 1; i++) {
@@ -87,10 +129,12 @@ int main()
     for(u32 i = 0; i < 50; i++){
         GulDukat(G, Orden1);
         coloreo = Greedy(G, Orden1);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo);
+        cantidad_it++;  
         ElimGarak(G, Orden1);
         coloreo = Greedy(G, Orden1);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo);    
+        cantidad_it++;
     }
     
     if(coloreo < min_color) {
@@ -103,10 +147,12 @@ int main()
     for(u32 i = 0; i < 50; i++){
         GulDukat(G, Orden2);
         coloreo = Greedy(G, Orden2);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++;  
         ElimGarak(G, Orden2);
         coloreo = Greedy(G, Orden2);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo);  
+        cantidad_it++;
     }
     
     if(coloreo < min_color) {
@@ -121,10 +167,12 @@ int main()
     for(u32 i = 0; i < 50; i++){
         GulDukat(G, Orden3);
         coloreo = Greedy(G, Orden3);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++;  
         ElimGarak(G, Orden3);
         coloreo = Greedy(G, Orden3);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo);  
+        cantidad_it++;
     }
     free(Orden3);
     
@@ -138,10 +186,12 @@ int main()
     for(u32 i = 0; i < 50; i++){
         GulDukat(G, Orden4);
         coloreo = Greedy(G, Orden4);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo);  
+        cantidad_it++; 
         ElimGarak(G, Orden4);
         coloreo = Greedy(G, Orden4);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++; 
     }
     free(Orden4);
     
@@ -155,10 +205,12 @@ int main()
     for(u32 i = 0; i < 50; i++){
         GulDukat(G, Orden5);
         coloreo = Greedy(G, Orden5);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++;  
         ElimGarak(G, Orden5);
         coloreo = Greedy(G, Orden5);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++; 
     }
     free(Orden5);
 
@@ -182,7 +234,8 @@ int main()
             ElimGarak(G, Orden1);
         }
         coloreo = Greedy(G, Orden1);
-        printf("%u\n", coloreo);
+        printf("Iteración %u: %u\n", cantidad_it, coloreo); 
+        cantidad_it++; 
     }
 
     free(Orden1);
